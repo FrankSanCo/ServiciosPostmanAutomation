@@ -1,0 +1,559 @@
+{
+	"info": {
+		"_postman_id": "f6484087-25d9-4d8b-82c0-1fb407b8340b",
+		"name": "Benefit Agora Misiones Copy",
+		"description": "Micorservicio de usabilidad us-ux-benefit\n\nContact Support:\n Name: Tunki Benefit InDigital\n Email: developers@indigital.pe",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "misiones",
+			"item": [
+				{
+					"name": "Obtener lista de misiones Excel",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1db72d1b-09fd-4e74-80a9-a9598fc7aba7",
+								"exec": [
+									"let codBodyEsp=data.codbody;\r",
+									"let deviceId=pm.environment.get(\"DeviceId\");\r",
+									"let rtoken=data.rtoken;\r",
+									"let rpw=data.rpw;\r",
+									"let url=pm.variables.get(\"baseUrl\");\r",
+									"//let userActual=pm.environment.get(\"Usuario\");\r",
+									"//let passActual=pm.environment.get(\"passActual\");\r",
+									"let userActual=data.userExcel+'';\r",
+									"let passActual=data.passExcel+'';\r",
+									"\r",
+									"\r",
+									"//let passActual=data.passExcel+'';\r",
+									"//if(rtoken===\"\")\r",
+									"//{\r",
+									"    pm.sendRequest( \r",
+									"    {\r",
+									"    url: url+'/agora-identity/identity/random-keyboard', method: 'GET',\r",
+									"    mode: 'application/json',\r",
+									"    header: \r",
+									"    {'X-Device-Id': deviceId+''\r",
+									"    },\r",
+									"    body: {\r",
+									"    mode: 'raw',\r",
+									"    }\r",
+									"    }, function (err, response)\r",
+									"     {\r",
+									"            pm.environment.set(\"keyboard\", response.json().keyboard);\r",
+									"    \r",
+									"    let resultTeclado=response.json().keyboard;\r",
+									"    let pass=passActual;\r",
+									"    let passFinal=\"[\";\r",
+									"    for(let p=0;p<pass.length;p++)\r",
+									"    {\r",
+									"       passPos=pass.substring(p,p+1);\r",
+									"       for (let i = 0; i < resultTeclado.length; i++)\r",
+									"       {\r",
+									"           if(resultTeclado[i]==passPos)\r",
+									"           {\r",
+									"            passFinal=passFinal+i;\r",
+									"                if(p==5)\r",
+									"                {\r",
+									"                  passFinal=passFinal+\"]\";\r",
+									"                }\r",
+									"                else\r",
+									"                {\r",
+									"                    passFinal=passFinal+\",\";\r",
+									"                }\r",
+									"           }\r",
+									"       }\r",
+									"    }\r",
+									"    if(rpw===\"\")\r",
+									"    {\r",
+									"        pm.environment.set(\"Password\",passFinal);\r",
+									"    }\r",
+									"    else\r",
+									"    {\r",
+									"        pm.environment.set(\"Password\",data.rpw);\r",
+									"    }\r",
+									"    let usidentifir=userActual;\r",
+									" pm.sendRequest( \r",
+									"    {\r",
+									"    url: url+'/agora-identity/identity/sign-in', method: 'POST',\r",
+									"    mode: 'application/json',\r",
+									"    header: \r",
+									"    {'X-Device-Id': deviceId+'',\r",
+									"\t'X-Platform': 'AND',\r",
+									"\t'X-Application': 'CUS',\r",
+									"\t'X-Version': '1.0',\r",
+									"\t'X-Model': 'abcd',\r",
+									"\t'Authorization': 'Basic Nzc4MDIxNmEtM2NjYi0zOGU2LWE0NTctYWNlOTA1MmYwZmQ4OmRlOTQxYWJiLWNiNjMtMzljMC1iNmVhLWZhNDFiZmRkZjJiYw==',\r",
+									"\t'Content-Type': 'application/json',\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({'identifier': usidentifir,\r",
+									"        'positions': JSON.parse(passFinal) })\r",
+									"    }\r",
+									"    }, function (err, response)\r",
+									"     {\r",
+									"        pm.environment.set(\"accessToken\", response.json().access_token);\r",
+									"  \r",
+									"    });\r",
+									" });\r",
+									"\r",
+									"//}\r",
+									"/*else\r",
+									"{\r",
+									"    pm.environment.set(\"accessToken\", data.authorization);\r",
+									"}*/"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "cf94efef-b885-42af-84b1-20f5def93082",
+								"exec": [
+									"let expectedCode= data.codigo;",
+									"let actualCode=responseCode.code;",
+									"",
+									" ",
+									"",
+									"if(expectedCode!==undefined && expectedCode!==null){",
+									"   if(expectedCode===actualCode){",
+									"       if(expectedCode===200){",
+									"           pm.test(\"el status code es: \"+actualCode,function(){pm.response.to.have.status(expectedCode); });",
+									"       }",
+									"       else if(expectedCode===400){",
+									"          // let response=JSON.parse(responseBody);",
+									"           pm.test(\"el status code es: \"+actualCode,function(){pm.response.to.have.status(expectedCode); });",
+									"          /* pm.test(\"el código de error es: GEN_ALL_01\", function(){",
+									"               pm.expect(response.code).to.eql(\"GEN_ALL_01\");",
+									"           })*/",
+									"       }",
+									"        else if(expectedCode===401){",
+									"          // let response=JSON.parse(responseBody);",
+									"           pm.test(\"el status code es: \"+actualCode,function(){pm.response.to.have.status(expectedCode); });",
+									"          /* pm.test(\"el código de error es: GEN_ALL_01\", function(){",
+									"               pm.expect(response.code).to.eql(\"GEN_ALL_01\");",
+									"           })*/",
+									"       }",
+									"     ",
+									"",
+									"        else if(expectedCode===500){",
+									"           let response=JSON.parse(responseBody);",
+									"           pm.test(\"el status code es: \"+actualCode,function(){pm.response.to.have.status(expectedCode); });",
+									"           pm.test(\"el código de error es: GEN_ALL_04\", function(){",
+									"               pm.expect(response.code).to.eql(\"GEN_ALL_04\");",
+									"           })",
+									"       }",
+									"       ",
+									"        else{",
+									"          pm.test(\"status code no mapeado\",function(){ pm.response.to.have.status(null);});",
+									"       console.log(\"el codigo no es igual\");  ",
+									"       }",
+									"       ",
+									"         ",
+									"   }",
+									"   else{",
+									"       pm.test(\"se esperaba status code: \"+expectedCode,function(){ pm.response.to.have.status(expectedCode);});",
+									"       console.log(\"el codigo no es igual\");",
+									"   }",
+									"}",
+									"else{",
+									"    pm.test(\"no se pudo obtener el código esperado, tiene que ejecutar el runner con el csv\",function(){ pm.expect(\"undefined\").to.equal(\"\"); });",
+									"    console.log(\"no se pudo obtener el código esperado\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"description": "Identificador del dispositivo que consume el servicio",
+								"key": "X-Device-Id",
+								"value": "{{deviceId}}"
+							},
+							{
+								"description": "Plataforma del dispositivo que consume el servicio ( AND:Android , IOS:IOS )",
+								"key": "X-Platform",
+								"value": "{{platform}}"
+							},
+							{
+								"description": "Aplicación del dispositivo que consume el servicio ( CUS:Aplicación Cliente , COM:Aplicación Negocio )",
+								"key": "X-Application",
+								"value": "{{application}}"
+							},
+							{
+								"description": "Token de acceso del dispositivo que consume el servicio",
+								"key": "access_token",
+								"value": "{{accessToken}}"
+							},
+							{
+								"description": "Client id de la aplicación",
+								"key": "client_id",
+								"value": "{{clientId}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/agora-user/benefit/missions?type=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"agora-user",
+								"benefit",
+								"missions"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "1",
+									"description": "Tipo de misión (1: all, 2: normal, 3: special)"
+								}
+							]
+						},
+						"description": "Servicio para obtener misiones"
+					},
+					"response": [
+						{
+							"name": "Unauthorized / GEN_ALL_03:Token expirado.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/benefit/missions?type=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"benefit",
+										"missions"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"GEN_ALL_03\",\n \"message\": \"Token expirado.\"\n}"
+						},
+						{
+							"name": "Ok / La solicitud ha tenido éxito, se ha creado una lista de misiones como resultado.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/benefit/missions?type=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"benefit",
+										"missions"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"title\": \"Misiones\",\n \"description\": \"Completa misiones para ganar Agoras que podrás canjear por descuentos, efectivo y experiencias.\",\n \"specialMissions\": [\n  {\n   \"title\": \"Por tu primera vez\",\n   \"message\": \"¡Gana 300 Agoras!\",\n   \"attributeMessage\": \"300\",\n   \"description\": \"Paga en cualquier tienda con Agora\",\n   \"backgroundImage\": \"https://firebasestorage.googleapis.com/v0/b/pe-grupo-intercorp-cld-01.appspot.com/o/mission%2Fspecial_mission_3.png?alt=media&token=5fbb36ca-8004-4951-98a5-7a1991106a29\",\n   \"deepLink\": \"\"\n  },\n  {\n   \"title\": \"Por tu primera vez\",\n   \"message\": \"¡Gana 300 Agoras!\",\n   \"attributeMessage\": \"300\",\n   \"description\": \"Paga a un contacto con Agora\",\n   \"backgroundImage\": \"https://firebasestorage.googleapis.com/v0/b/pe-grupo-intercorp-cld-01.appspot.com/o/mission%2Fspecial_mission_7.png?alt=media&token=b9d34dbe-e578-43ce-bbb1-ae43cb8c5235\",\n   \"deepLink\": \"\"\n  },\n  {\n   \"title\": \"Por tu primera vez\",\n   \"message\": \"¡Gana 300 Agoras!\",\n   \"attributeMessage\": \"300\",\n   \"description\": \"Realiza una recarga de billetera\",\n   \"backgroundImage\": \"https://firebasestorage.googleapis.com/v0/b/pe-grupo-intercorp-cld-01.appspot.com/o/mission%2Fspecial_mission_4.png?alt=media&token=56dc0a0c-3c27-4c67-aaf1-0dbdaf42016c\",\n   \"deepLink\": \"\"\n  },\n  {\n   \"title\": \"Por tu primera vez\",\n   \"message\": \"¡Gana 300 Agoras!\",\n   \"attributeMessage\": \"300\",\n   \"description\": \"Valida tu correo electrónico\",\n   \"backgroundImage\": \"https://firebasestorage.googleapis.com/v0/b/pe-grupo-intercorp-cld-01.appspot.com/o/mission%2Fspecial_mission_8.png?alt=media&token=39a44edd-2724-4a4d-82c9-2c98243294b9\",\n   \"deepLink\": \"\"\n  }\n ],\n \"missions\": [\n  {\n   \"title\": \"¡Todo el mes!\",\n   \"message\": \"¡Gana 200 Agoras!\",\n   \"attributeMessage\": \"200\",\n   \"description\": \"Refiere Agora a un amigo\",\n   \"backgroundImage\": \"\",\n   \"deepLink\": \"\"\n  },\n  {\n   \"title\": \"¡Todo el mes!\",\n   \"message\": \"¡Gana 100 Agoras!\",\n   \"attributeMessage\": \"100\",\n   \"description\": \"Paga con Agora en cualquier tienda\",\n   \"backgroundImage\": \"\",\n   \"deepLink\": \"\"\n  }\n ]\n}"
+						},
+						{
+							"name": "Bad Request / GEN_ALL_01:Sintaxis inválida en formato, tamaño, tipo de dato, valor determinado o requerido.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/benefit/missions?type=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"benefit",
+										"missions"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"GEN_ALL_01\",\n \"message\": \"Sintaxis inválida en formato, tamaño, tipo de dato, valor determinado o requerido.\",\n \"errors\": [\n  {\n   \"field\": \"field one\",\n   \"message\": \"message one\"\n  },\n  {\n   \"field\": \"field two\",\n   \"message\": \"message two\"\n  }\n ]\n}"
+						},
+						{
+							"name": "Forbidden / GEN_ALL_04:Token inválido.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/benefit/missions?type=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"benefit",
+										"missions"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"GEN_ALL_04\",\n \"message\": \"Token inválido.\"\n}"
+						},
+						{
+							"name": "Internal Server Error / GEN_ALL_02:Error interno del servidor.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-Device-Id",
+										"value": "<string>",
+										"description": "Identificador del dispositivo que consume el servicio"
+									},
+									{
+										"key": "X-Platform",
+										"value": "<AND|IOS>",
+										"description": "Plataforma del dispositivo que consume el servicio ( AND:Android , IOS:IOS )"
+									},
+									{
+										"key": "X-Application",
+										"value": "<CUS|COM>",
+										"description": "Aplicación del dispositivo que consume el servicio ( CUS:Aplicación Cliente , COM:Aplicación Negocio )"
+									},
+									{
+										"key": "access_token",
+										"value": "<string>",
+										"description": "Token de acceso del dispositivo que consume el servicio"
+									},
+									{
+										"key": "client_id",
+										"value": "<string>",
+										"description": "Client id de la aplicación"
+									},
+									{
+										"key": "X-Device-Id",
+										"value": "<string>",
+										"description": "Identificador del dispositivo que consume el servicio"
+									},
+									{
+										"key": "X-Platform",
+										"value": "<AND|IOS>",
+										"description": "Plataforma del dispositivo que consume el servicio ( AND:Android , IOS:IOS )"
+									},
+									{
+										"key": "X-Application",
+										"value": "<CUS|COM>",
+										"description": "Aplicación del dispositivo que consume el servicio ( CUS:Aplicación Cliente , COM:Aplicación Negocio )"
+									},
+									{
+										"key": "access_token",
+										"value": "<string>",
+										"description": "Token de acceso del dispositivo que consume el servicio"
+									},
+									{
+										"key": "client_id",
+										"value": "<string>",
+										"description": "Client id de la aplicación"
+									},
+									{
+										"key": "X-Device-Id",
+										"value": "<string>",
+										"description": "Identificador del dispositivo que consume el servicio"
+									},
+									{
+										"key": "X-Platform",
+										"value": "<AND|IOS>",
+										"description": "Plataforma del dispositivo que consume el servicio ( AND:Android , IOS:IOS )"
+									},
+									{
+										"key": "X-Application",
+										"value": "<CUS|COM>",
+										"description": "Aplicación del dispositivo que consume el servicio ( CUS:Aplicación Cliente , COM:Aplicación Negocio )"
+									},
+									{
+										"key": "access_token",
+										"value": "<string>",
+										"description": "Token de acceso del dispositivo que consume el servicio"
+									},
+									{
+										"key": "client_id",
+										"value": "<string>",
+										"description": "Client id de la aplicación"
+									},
+									{
+										"key": "X-Device-Id",
+										"value": "<string>",
+										"description": "Identificador del dispositivo que consume el servicio"
+									},
+									{
+										"key": "X-Platform",
+										"value": "<AND|IOS>",
+										"description": "Plataforma del dispositivo que consume el servicio ( AND:Android , IOS:IOS )"
+									},
+									{
+										"key": "X-Application",
+										"value": "<CUS|COM>",
+										"description": "Aplicación del dispositivo que consume el servicio ( CUS:Aplicación Cliente , COM:Aplicación Negocio )"
+									},
+									{
+										"key": "access_token",
+										"value": "<string>",
+										"description": "Token de acceso del dispositivo que consume el servicio"
+									},
+									{
+										"key": "client_id",
+										"value": "<string>",
+										"description": "Client id de la aplicación"
+									},
+									{
+										"key": "X-Device-Id",
+										"value": "<string>",
+										"description": "Identificador del dispositivo que consume el servicio"
+									},
+									{
+										"key": "X-Platform",
+										"value": "<AND|IOS>",
+										"description": "Plataforma del dispositivo que consume el servicio ( AND:Android , IOS:IOS )"
+									},
+									{
+										"key": "X-Application",
+										"value": "<CUS|COM>",
+										"description": "Aplicación del dispositivo que consume el servicio ( CUS:Aplicación Cliente , COM:Aplicación Negocio )"
+									},
+									{
+										"key": "access_token",
+										"value": "<string>",
+										"description": "Token de acceso del dispositivo que consume el servicio"
+									},
+									{
+										"key": "client_id",
+										"value": "<string>",
+										"description": "Client id de la aplicación"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/benefit/missions?type=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"benefit",
+										"missions"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"GEN_ALL_02\",\n \"message\": \"Error de servidor interno.\"\n}"
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "99fc6ffc-ee2f-4066-9b75-e7e93ed934b0",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a901445e-c07f-4de2-8209-90c0d6943caa",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "462b0c1a-86d6-4313-8ad9-b9a9e61173b4",
+			"key": "baseUrl",
+			"value": "https://api.indigital.com.pe/qa",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

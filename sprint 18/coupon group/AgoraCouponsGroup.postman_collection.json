@@ -1,0 +1,522 @@
+{
+	"info": {
+		"_postman_id": "2e738209-9fb6-4603-9eba-3c51b0543fca",
+		"name": "Agora Coupons group",
+		"description": "Micorservicio de usabilidad us-ux-benefit\n\nContact Support:\n Name: Tunki Benefit InDigital\n Email: developers@indigital.pe",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "misiones",
+			"item": [
+				{
+					"name": "Obtener lista de grupos de cupones",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "aa363902-3715-44ac-8813-0a0d90eb4dda",
+								"exec": [
+									"let codBodyEsp=data.codbody;\r",
+									"let deviceId=pm.environment.get(\"DeviceId\");\r",
+									"let rtoken=data.rtoken;\r",
+									"let rpw=data.rpw;\r",
+									"let url=pm.variables.get(\"baseUrl\");\r",
+									"//let userActual=pm.environment.get(\"Usuario\");\r",
+									"//let passActual=pm.environment.get(\"passActual\");\r",
+									"let userActual=data.userExcel+'';\r",
+									"let passActual=data.passExcel+'';\r",
+									"\r",
+									"\r",
+									"//let passActual=data.passExcel+'';\r",
+									"//if(rtoken===\"\")\r",
+									"//{\r",
+									"    pm.sendRequest( \r",
+									"    {\r",
+									"    url: url+'/agora-identity/identity/random-keyboard', method: 'GET',\r",
+									"    mode: 'application/json',\r",
+									"    header: \r",
+									"    {'X-Device-Id': deviceId+''\r",
+									"    },\r",
+									"    body: {\r",
+									"    mode: 'raw',\r",
+									"    }\r",
+									"    }, function (err, response)\r",
+									"     {\r",
+									"            pm.environment.set(\"keyboard\", response.json().keyboard);\r",
+									"    \r",
+									"    let resultTeclado=response.json().keyboard;\r",
+									"    let pass=passActual;\r",
+									"    let passFinal=\"[\";\r",
+									"    for(let p=0;p<pass.length;p++)\r",
+									"    {\r",
+									"       passPos=pass.substring(p,p+1);\r",
+									"       for (let i = 0; i < resultTeclado.length; i++)\r",
+									"       {\r",
+									"           if(resultTeclado[i]==passPos)\r",
+									"           {\r",
+									"            passFinal=passFinal+i;\r",
+									"                if(p==5)\r",
+									"                {\r",
+									"                  passFinal=passFinal+\"]\";\r",
+									"                }\r",
+									"                else\r",
+									"                {\r",
+									"                    passFinal=passFinal+\",\";\r",
+									"                }\r",
+									"           }\r",
+									"       }\r",
+									"    }\r",
+									"    if(rpw===\"\")\r",
+									"    {\r",
+									"        pm.environment.set(\"Password\",passFinal);\r",
+									"    }\r",
+									"    else\r",
+									"    {\r",
+									"        pm.environment.set(\"Password\",data.rpw);\r",
+									"    }\r",
+									"    let usidentifir=userActual;\r",
+									" pm.sendRequest( \r",
+									"    {\r",
+									"    url: url+'/agora-identity/identity/sign-in', method: 'POST',\r",
+									"    mode: 'application/json',\r",
+									"    header: \r",
+									"    {'X-Device-Id': deviceId+'',\r",
+									"\t'X-Platform': 'AND',\r",
+									"\t'X-Application': 'CUS',\r",
+									"\t'X-Version': '1.0',\r",
+									"\t'X-Model': 'abcd',\r",
+									"\t'Authorization': 'Basic Nzc4MDIxNmEtM2NjYi0zOGU2LWE0NTctYWNlOTA1MmYwZmQ4OmRlOTQxYWJiLWNiNjMtMzljMC1iNmVhLWZhNDFiZmRkZjJiYw==',\r",
+									"\t'Content-Type': 'application/json',\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({'identifier': usidentifir,\r",
+									"        'positions': JSON.parse(passFinal) })\r",
+									"    }\r",
+									"    }, function (err, response)\r",
+									"     {\r",
+									"        pm.environment.set(\"accessToken\", response.json().access_token);\r",
+									"  \r",
+									"    });\r",
+									" });\r",
+									"\r",
+									"//}\r",
+									"/*else\r",
+									"{\r",
+									"    pm.environment.set(\"accessToken\", data.authorization);\r",
+									"}*/"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "eb9abe04-5a54-49c9-a26a-c155fbc97f03",
+								"exec": [
+									"let expectedCode= data.codigo;",
+									"let actualCode=responseCode.code;",
+									"",
+									" ",
+									"",
+									"if(expectedCode!==undefined && expectedCode!==null){",
+									"   if(expectedCode===actualCode){",
+									"       if(expectedCode===200){",
+									"           pm.test(\"el status code es: \"+actualCode,function(){pm.response.to.have.status(expectedCode); });",
+									"       }",
+									"       else if(expectedCode===400){",
+									"          // let response=JSON.parse(responseBody);",
+									"           pm.test(\"el status code es: \"+actualCode,function(){pm.response.to.have.status(expectedCode); });",
+									"          /* pm.test(\"el código de error es: GEN_ALL_01\", function(){",
+									"               pm.expect(response.code).to.eql(\"GEN_ALL_01\");",
+									"           })*/",
+									"       }",
+									"        else if(expectedCode===401){",
+									"          // let response=JSON.parse(responseBody);",
+									"           pm.test(\"el status code es: \"+actualCode,function(){pm.response.to.have.status(expectedCode); });",
+									"          /* pm.test(\"el código de error es: GEN_ALL_01\", function(){",
+									"               pm.expect(response.code).to.eql(\"GEN_ALL_01\");",
+									"           })*/",
+									"       }",
+									"     ",
+									"",
+									"        else if(expectedCode===500){",
+									"           let response=JSON.parse(responseBody);",
+									"           pm.test(\"el status code es: \"+actualCode,function(){pm.response.to.have.status(expectedCode); });",
+									"           pm.test(\"el código de error es: GEN_ALL_04\", function(){",
+									"               pm.expect(response.code).to.eql(\"GEN_ALL_04\");",
+									"           })",
+									"       }",
+									"       ",
+									"        else{",
+									"          pm.test(\"status code no mapeado\",function(){ pm.response.to.have.status(null);});",
+									"       console.log(\"el codigo no es igual\");  ",
+									"       }",
+									"       ",
+									"         ",
+									"   }",
+									"   else{",
+									"       pm.test(\"se esperaba status code: \"+expectedCode,function(){ pm.response.to.have.status(expectedCode);});",
+									"       console.log(\"el codigo no es igual\");",
+									"   }",
+									"}",
+									"else{",
+									"    pm.test(\"no se pudo obtener el código esperado, tiene que ejecutar el runner con el csv\",function(){ pm.expect(\"undefined\").to.equal(\"\"); });",
+									"    console.log(\"no se pudo obtener el código esperado\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Device-Id",
+								"value": "{{deviceId}}",
+								"description": "Identificador del dispositivo que consume el servicio"
+							},
+							{
+								"key": "X-Platform",
+								"value": "{{platform}}",
+								"description": "Plataforma del dispositivo que consume el servicio ( AND:Android , IOS:IOS )"
+							},
+							{
+								"key": "X-Application",
+								"value": "{{application}}",
+								"description": "Aplicación del dispositivo que consume el servicio ( CUS:Aplicación Cliente , COM:Aplicación Negocio )"
+							},
+							{
+								"key": "access_token",
+								"value": "{{accessToken}}",
+								"description": "Token de acceso del dispositivo que consume el servicio"
+							},
+							{
+								"key": "client_id",
+								"value": "{{clientId}}",
+								"description": "Client id de la aplicación"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/agora-user/benefit/coupons-group",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"agora-user",
+								"benefit",
+								"coupons-group"
+							]
+						},
+						"description": "Servicio para obtener grupos de cupones"
+					},
+					"response": [
+						{
+							"name": "Internal Server Error / GEN_ALL_02:Error interno del servidor.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-Device-Id",
+										"value": "<string>",
+										"description": "Identificador del dispositivo que consume el servicio"
+									},
+									{
+										"key": "X-Platform",
+										"value": "<AND|IOS>",
+										"description": "Plataforma del dispositivo que consume el servicio ( AND:Android , IOS:IOS )"
+									},
+									{
+										"key": "X-Application",
+										"value": "<CUS|COM>",
+										"description": "Aplicación del dispositivo que consume el servicio ( CUS:Aplicación Cliente , COM:Aplicación Negocio )"
+									},
+									{
+										"key": "access_token",
+										"value": "<string>",
+										"description": "Token de acceso del dispositivo que consume el servicio"
+									},
+									{
+										"key": "client_id",
+										"value": "<string>",
+										"description": "Client id de la aplicación"
+									},
+									{
+										"key": "X-Device-Id",
+										"value": "<string>",
+										"description": "Identificador del dispositivo que consume el servicio"
+									},
+									{
+										"key": "X-Platform",
+										"value": "<AND|IOS>",
+										"description": "Plataforma del dispositivo que consume el servicio ( AND:Android , IOS:IOS )"
+									},
+									{
+										"key": "X-Application",
+										"value": "<CUS|COM>",
+										"description": "Aplicación del dispositivo que consume el servicio ( CUS:Aplicación Cliente , COM:Aplicación Negocio )"
+									},
+									{
+										"key": "access_token",
+										"value": "<string>",
+										"description": "Token de acceso del dispositivo que consume el servicio"
+									},
+									{
+										"key": "client_id",
+										"value": "<string>",
+										"description": "Client id de la aplicación"
+									},
+									{
+										"key": "X-Device-Id",
+										"value": "<string>",
+										"description": "Identificador del dispositivo que consume el servicio"
+									},
+									{
+										"key": "X-Platform",
+										"value": "<AND|IOS>",
+										"description": "Plataforma del dispositivo que consume el servicio ( AND:Android , IOS:IOS )"
+									},
+									{
+										"key": "X-Application",
+										"value": "<CUS|COM>",
+										"description": "Aplicación del dispositivo que consume el servicio ( CUS:Aplicación Cliente , COM:Aplicación Negocio )"
+									},
+									{
+										"key": "access_token",
+										"value": "<string>",
+										"description": "Token de acceso del dispositivo que consume el servicio"
+									},
+									{
+										"key": "client_id",
+										"value": "<string>",
+										"description": "Client id de la aplicación"
+									},
+									{
+										"key": "X-Device-Id",
+										"value": "<string>",
+										"description": "Identificador del dispositivo que consume el servicio"
+									},
+									{
+										"key": "X-Platform",
+										"value": "<AND|IOS>",
+										"description": "Plataforma del dispositivo que consume el servicio ( AND:Android , IOS:IOS )"
+									},
+									{
+										"key": "X-Application",
+										"value": "<CUS|COM>",
+										"description": "Aplicación del dispositivo que consume el servicio ( CUS:Aplicación Cliente , COM:Aplicación Negocio )"
+									},
+									{
+										"key": "access_token",
+										"value": "<string>",
+										"description": "Token de acceso del dispositivo que consume el servicio"
+									},
+									{
+										"key": "client_id",
+										"value": "<string>",
+										"description": "Client id de la aplicación"
+									},
+									{
+										"key": "X-Device-Id",
+										"value": "<string>",
+										"description": "Identificador del dispositivo que consume el servicio"
+									},
+									{
+										"key": "X-Platform",
+										"value": "<AND|IOS>",
+										"description": "Plataforma del dispositivo que consume el servicio ( AND:Android , IOS:IOS )"
+									},
+									{
+										"key": "X-Application",
+										"value": "<CUS|COM>",
+										"description": "Aplicación del dispositivo que consume el servicio ( CUS:Aplicación Cliente , COM:Aplicación Negocio )"
+									},
+									{
+										"key": "access_token",
+										"value": "<string>",
+										"description": "Token de acceso del dispositivo que consume el servicio"
+									},
+									{
+										"key": "client_id",
+										"value": "<string>",
+										"description": "Client id de la aplicación"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/benefit/coupons-group",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"benefit",
+										"coupons-group"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"GEN_ALL_02\",\n \"message\": \"Error de servidor interno.\"\n}"
+						},
+						{
+							"name": "Ok / La solicitud ha tenido éxito, se ha creado una lista de grupos de cupones como resultado.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/benefit/coupons-group",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"benefit",
+										"coupons-group"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"couponsGroup\": [\n  {\n   \"couponsGroupId\": \"df18cc1c-cff8-4f2a-b273-b7fb853f73d1\",\n   \"couponsGroupName\": \"Descuentos y efectivo\",\n   \"iconUrl\": \"\",\n   \"button\": {\n    \"buttonText\": \"Ver cupones\",\n    \"deeplink\": \"\"\n   }\n  },\n  {\n   \"couponsGroupId\": \"df18cc1c-cff8-4f2a-b273-b7fb853f73d2\",\n   \"couponsGroupName\": \"Experiencias\",\n   \"iconUrl\": \"\",\n   \"button\": {\n    \"buttonText\": \"Ver cupones\",\n    \"deeplink\": \"\"\n   }\n  }\n ]\n}"
+						},
+						{
+							"name": "Bad Request / GEN_ALL_01:Sintaxis inválida en formato, tamaño, tipo de dato, valor determinado o requerido.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/benefit/coupons-group",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"benefit",
+										"coupons-group"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"GEN_ALL_01\",\n \"message\": \"Sintaxis inválida en formato, tamaño, tipo de dato, valor determinado o requerido.\",\n \"errors\": [\n  {\n   \"field\": \"field one\",\n   \"message\": \"message one\"\n  },\n  {\n   \"field\": \"field two\",\n   \"message\": \"message two\"\n  }\n ]\n}"
+						},
+						{
+							"name": "Forbidden / GEN_ALL_04:Token inválido.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/benefit/coupons-group",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"benefit",
+										"coupons-group"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"GEN_ALL_04\",\n \"message\": \"Token inválido.\"\n}"
+						},
+						{
+							"name": "Unauthorized / GEN_ALL_03:Token expirado.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/benefit/coupons-group",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"benefit",
+										"coupons-group"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"code\": \"GEN_ALL_03\",\n \"message\": \"Token expirado.\"\n}"
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "99fc6ffc-ee2f-4066-9b75-e7e93ed934b0",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a901445e-c07f-4de2-8209-90c0d6943caa",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "462b0c1a-86d6-4313-8ad9-b9a9e61173b4",
+			"key": "baseUrl",
+			"value": "https://api.indigital.com.pe/qa",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
